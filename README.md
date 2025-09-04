@@ -11,6 +11,9 @@ project-root/
 ├── k8s/
 │   ├── nim-helm-values.yaml
 │   └── deploy-app.yaml
+├── mock_nim/
+│   ├── Dockerfile
+│   └── server.py
 ├── app/
 │   ├── main.py
 │   ├── nim_client.py
@@ -35,13 +38,21 @@ project-root/
 ./scripts/run_compose.sh
 ```
 
-2. The app runs and calls NIM via `nim-proxy` on `http://localhost:8000`.
+Note: `./scripts/run_compose.sh` runs `docker compose up --build`, so it will build images automatically; running `build.sh` is optional.
+
+2. The app runs and calls a local mock NIM service `mock-nim` at `http://mock-nim:8000` (exposed on the host as `http://localhost:8000`).
+
+2a. The app's web server is available at `http://localhost:9000`:
+- `/` basic status
+- `/run` executes the OCR→LLM pipeline
+- `/metrics` Prometheus metrics
+- `/healthz` health check
 
 3. Monitoring:
 - Prometheus: `http://localhost:9090`
 - Grafana: `http://localhost:3000` (add Prometheus data source, import dashboard JSON from `monitoring/grafana-dashboard.json`)
 
-Note: Images `ghcr.io/example/*` are placeholders; replace with actual NVIDIA NIM containers or your proxy.
+Note: The compose file includes a local `mock-nim` for development. Replace it (and any placeholder images) with your actual NVIDIA NIM proxy/services when deploying.
 
 ### Kubernetes
 
